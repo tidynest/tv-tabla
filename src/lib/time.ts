@@ -36,13 +36,11 @@ export function relativeDay(ts: number, locale: Locale): string {
   const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
   const targetStart = new Date(target.getFullYear(), target.getMonth(), target.getDate()).getTime();
   const diffDays = Math.floor((targetStart - todayStart) / 86400000);
-
   const labels: Record<Locale, { today: string; tomorrow: string }> = {
     "sv-SE": { today: "Idag", tomorrow: "Imorgon" },
     "en-GB": { today: "Today", tomorrow: "Tomorrow" },
     "pt-BR": { today: "Hoje", tomorrow: "Amanha" },
   };
-
   const l = labels[locale];
   if (diffDays === 0) return l.today;
   if (diffDays === 1) return l.tomorrow;
