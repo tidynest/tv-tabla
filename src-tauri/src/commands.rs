@@ -94,15 +94,21 @@ pub async fn refresh_data(state: tauri::State<'_, AppState>) -> Result<(), AppEr
         crate::db::get_visible_channels(&db)?
     };
 
-    let today = chrono::Local::now().format("%Y-%m-%d").to_string();
-    for channel in &visible {
-        match crate::fetcher::fetch_programs(&channel.id, &today).await {
-            Ok(programs) => {
-                let db = state.db.lock().unwrap();
-                crate::db::upsert_programs(&db, &programs)?;
-            }
-            Err(e) => {
-                log::warn!("Failed to fetch {}: {}", channel.id, e);
+    let today = chrono::Local::now().date_naive();
+    let dates: Vec<String> = (0..7)
+        .map(|d| (today + chrono::Duration::days(d)).format("%Y-%m-%d").to_string())
+        .collect();
+
+    for date in &dates {
+        for channel in &visible {
+            match crate::fetcher::fetch_programs(&channel.id, date).await {
+                Ok(programs) => {
+                    let db = state.db.lock().unwrap();
+                    crate::db::upsert_programs(&db, &programs)?;
+                }
+                Err(e) => {
+                    log::warn!("Failed to fetch {} on {}: {}", channel.id, date, e);
+                }
             }
         }
     }

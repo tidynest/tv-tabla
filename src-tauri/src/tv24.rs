@@ -33,11 +33,13 @@ pub fn parse_channels(html: &str) -> Result<Vec<Channel>, AppError> {
             continue;
         }
 
+        let selected = li.value().attr("data-channelselected") == Some("yes");
+
         channels.push(Channel {
             id: slug,
             name,
             icon_url,
-            visible: true,
+            visible: selected,
             sort_order,
         });
         sort_order += 1;

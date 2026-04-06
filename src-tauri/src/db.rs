@@ -175,11 +175,13 @@ pub fn set_setting(conn: &Connection, key: &str, value: &str) -> Result<(), AppE
 pub fn upsert_channels(conn: &Connection, channels: &[Channel]) -> Result<(), AppError> {
     let mut stmt = conn.prepare(
         "INSERT INTO channels (id, name, icon_url, visible, sort_order)
-         VALUES (?1, ?2, ?3, 1, ?4)
-         ON CONFLICT(id) DO UPDATE SET name = excluded.name, icon_url = excluded.icon_url",
+         VALUES (?1, ?2, ?3, ?4, ?5)
+         ON CONFLICT(id) DO UPDATE SET name = excluded.name, icon_url = excluded.icon_url, sort_order = excluded.sort_order",
     )?;
-    for (i, ch) in channels.iter().enumerate() {
-        stmt.execute(rusqlite::params![ch.id, ch.name, ch.icon_url, i as i32])?;
+    for ch in channels {
+        stmt.execute(rusqlite::params![
+            ch.id, ch.name, ch.icon_url, ch.visible as i32, ch.sort_order
+        ])?;
     }
     Ok(())
 }

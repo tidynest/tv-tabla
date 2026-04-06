@@ -73,7 +73,11 @@ fn test_parse_channels() {
     assert_eq!(channels[0].sort_order, 0);
 
     assert_eq!(channels[1].id, "svt2");
+    assert!(channels[0].visible, "svt1 should be visible (channelselected=yes)");
+    assert!(channels[1].visible, "svt2 should be visible (channelselected=yes)");
+
     assert_eq!(channels[2].id, "tv4");
+    assert!(!channels[2].visible, "tv4 should be hidden (channelselected=no)");
     assert_eq!(channels[2].sort_order, 2);
 }
 
