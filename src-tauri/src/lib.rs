@@ -3,6 +3,7 @@ mod db;
 mod error;
 mod fetcher;
 mod models;
+pub mod tv24;
 pub mod xmltv;
 
 use std::sync::Mutex;

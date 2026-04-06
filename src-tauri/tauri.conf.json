@@ -20,7 +20,7 @@
       }
     ],
     "security": {
-      "csp": "default-src 'self'; img-src 'self' https://xmltv.xmltv.se; style-src 'self' 'unsafe-inline'"
+      "csp": "default-src 'self'; img-src 'self' https://assets.tv24.co; connect-src 'self' https://tv24.se; style-src 'self' 'unsafe-inline'"
     }
   },
   "bundle": {

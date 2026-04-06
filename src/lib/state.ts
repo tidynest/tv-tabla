@@ -15,7 +15,7 @@ export const [settingsOpen, setSettingsOpen] = createSignal(false);
 setInterval(() => setCurrentTime(nowTimestamp()), 60_000);
 
 // --- Data Resources ---
-const [refreshCounter, setRefreshCounter] = createSignal(0);
+const [refreshCounter, setRefreshCounter] = createSignal(1);
 
 export const [channels, { refetch: refetchChannels }] = createResource(
   refreshCounter,
