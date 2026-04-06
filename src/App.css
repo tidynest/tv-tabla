@@ -150,6 +150,10 @@ html, body, #root {
 .program-block:hover {
   background: var(--accent);
   color: white;
+  z-index: 5;
+  width: max-content !important;
+  min-width: max-content;
+  box-shadow: 2px 0 8px rgba(0, 0, 0, 0.2);
 }
 
 .now-marker {

@@ -57,7 +57,7 @@ export function TimelineGrid() {
     const { start } = timeRange();
     const left = Math.max(0, ((program.start_time - start) / 60) * PIXELS_PER_MINUTE);
     const right = ((program.end_time - start) / 60) * PIXELS_PER_MINUTE;
-    const width = Math.max(20, right - left);
+    const width = Math.max(48, right - left);
     return `left:${left}px;width:${width}px`;
   }
 
