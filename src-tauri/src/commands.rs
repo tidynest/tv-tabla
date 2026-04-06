@@ -63,6 +63,28 @@ pub async fn set_setting(
 }
 
 #[tauri::command]
+pub async fn get_cache_age(state: tauri::State<'_, AppState>) -> Result<Option<i64>, AppError> {
+    let db = state.db.lock().unwrap();
+    crate::db::get_cache_age_seconds(&db)
+}
+
+#[tauri::command]
+pub async fn get_all_channels(state: tauri::State<'_, AppState>) -> Result<Vec<Channel>, AppError> {
+    let db = state.db.lock().unwrap();
+    crate::db::get_all_channels(&db)
+}
+
+#[tauri::command]
+pub async fn get_favourite_programs(
+    state: tauri::State<'_, AppState>,
+    from: i64,
+    to: i64,
+) -> Result<Vec<Program>, AppError> {
+    let db = state.db.lock().unwrap();
+    crate::db::get_favourite_programs(&db, from, to)
+}
+
+#[tauri::command]
 pub async fn refresh_data(state: tauri::State<'_, AppState>) -> Result<(), AppError> {
     let channels = crate::fetcher::fetch_channels().await?;
 

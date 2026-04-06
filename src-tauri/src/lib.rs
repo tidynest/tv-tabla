@@ -17,13 +17,16 @@ pub fn run() {
         .plugin(tauri_plugin_opener::init())
         .invoke_handler(tauri::generate_handler![
             commands::get_channels,
+            commands::get_all_channels,
             commands::get_programs,
             commands::get_favourites,
+            commands::get_favourite_programs,
             commands::toggle_favourite,
             commands::set_channel_visibility,
             commands::get_setting,
             commands::set_setting,
             commands::refresh_data,
+            commands::get_cache_age,
         ])
         .setup(|app| {
             use tauri::Manager;
