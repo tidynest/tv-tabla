@@ -128,7 +128,6 @@ html, body, #root {
   height: 52px;
   border-bottom: 1px solid var(--border);
   position: relative;
-  overflow: hidden;
 }
 
 .program-block {
@@ -152,7 +151,6 @@ html, body, #root {
   background: var(--accent);
   color: white;
   z-index: 5;
-  width: max-content !important;
   min-width: max-content;
   box-shadow: 2px 0 8px rgba(0, 0, 0, 0.2);
 }
