@@ -72,7 +72,7 @@ export function TimelineGrid() {
     <div>
       <div class="timeline-grid">
         <div class="channel-labels">
-          <div class="channel-label" style="height:32px;font-size:12px;color:var(--text-secondary)">
+          <div class="channel-label" style="height:36px;font-size:12px;color:var(--text-secondary)">
             &nbsp;
           </div>
           <For each={channels() ?? []}>

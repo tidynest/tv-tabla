@@ -91,7 +91,7 @@ html, body, #root {
 /* --- Timeline Grid --- */
 .timeline-grid {
   display: grid;
-  grid-template-columns: 120px 1fr;
+  grid-template-columns: 160px 1fr;
   border: 1px solid var(--border);
   border-radius: var(--radius);
   background: var(--bg-card);
@@ -128,6 +128,7 @@ html, body, #root {
   height: 52px;
   border-bottom: 1px solid var(--border);
   position: relative;
+  overflow: hidden;
 }
 
 .program-block {
