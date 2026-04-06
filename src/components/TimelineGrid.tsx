@@ -13,7 +13,7 @@ import { formatTime } from "../lib/time";
 import { ProgramPopup } from "./ProgramPopup";
 import type { Program, Channel } from "../lib/types";
 
-const PIXELS_PER_MINUTE = 4;
+const PIXELS_PER_MINUTE = 8;
 const VISIBLE_HOURS = 3;
 
 export function TimelineGrid() {
@@ -32,7 +32,7 @@ export function TimelineGrid() {
   const timeSlots = createMemo(() => {
     const { start, end } = timeRange();
     const slots: number[] = [];
-    for (let t = start; t < end; t += 1800) {
+    for (let t = start; t < end; t += 3600) {
       slots.push(t);
     }
     return slots;
@@ -57,7 +57,7 @@ export function TimelineGrid() {
     const { start } = timeRange();
     const left = Math.max(0, ((program.start_time - start) / 60) * PIXELS_PER_MINUTE);
     const right = ((program.end_time - start) / 60) * PIXELS_PER_MINUTE;
-    const width = Math.max(48, right - left);
+    const width = Math.max(30, right - left);
     return `left:${left}px;width:${width}px`;
   }
 
@@ -85,7 +85,7 @@ export function TimelineGrid() {
             <div class="time-header">
               <For each={timeSlots()}>
                 {(ts: number) => (
-                  <span style={`width:${30 * PIXELS_PER_MINUTE}px`}>
+                  <span style={`width:${60 * PIXELS_PER_MINUTE}px`}>
                     {formatTime(ts, locale())}
                   </span>
                 )}

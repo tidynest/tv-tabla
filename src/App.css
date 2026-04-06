@@ -168,9 +168,10 @@ html, body, #root {
 
 .time-header {
   display: flex;
-  height: 32px;
+  height: 36px;
   border-bottom: 2px solid var(--border);
-  font-size: 12px;
+  font-size: 14px;
+  font-weight: 600;
   color: var(--text-secondary);
 }
 
