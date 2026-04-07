@@ -42,7 +42,9 @@ pub fn run() {
             std::fs::create_dir_all(&app_dir)?;
             let db_path = app_dir.join("tv-tabla.db");
             let conn = db::init_db(&db_path)?;
-            app.manage(AppState { db: Mutex::new(conn) });
+            app.manage(AppState {
+                db: Mutex::new(conn),
+            });
             Ok(())
         })
         .run(tauri::generate_context!())

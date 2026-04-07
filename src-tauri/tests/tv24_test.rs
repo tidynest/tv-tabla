@@ -73,11 +73,20 @@ fn test_parse_channels() {
     assert_eq!(channels[0].sort_order, 0);
 
     assert_eq!(channels[1].id, "svt2");
-    assert!(channels[0].visible, "svt1 should be visible (channelselected=yes)");
-    assert!(channels[1].visible, "svt2 should be visible (channelselected=yes)");
+    assert!(
+        channels[0].visible,
+        "svt1 should be visible (channelselected=yes)"
+    );
+    assert!(
+        channels[1].visible,
+        "svt2 should be visible (channelselected=yes)"
+    );
 
     assert_eq!(channels[2].id, "tv4");
-    assert!(!channels[2].visible, "tv4 should be hidden (channelselected=no)");
+    assert!(
+        !channels[2].visible,
+        "tv4 should be hidden (channelselected=no)"
+    );
     assert_eq!(channels[2].sort_order, 2);
 }
 
@@ -88,8 +97,14 @@ fn test_parse_programs() {
 
     assert_eq!(programs[0].title, "Husdrömmar");
     assert_eq!(programs[0].channel_id, "svt1");
-    assert_eq!(programs[0].description.as_deref(), Some("Systrarna bygger stugor i Roslagen."));
-    assert_eq!(programs[0].category.as_deref(), Some("Säsong 13 Avsnitt 11"));
+    assert_eq!(
+        programs[0].description.as_deref(),
+        Some("Systrarna bygger stugor i Roslagen.")
+    );
+    assert_eq!(
+        programs[0].category.as_deref(),
+        Some("Säsong 13 Avsnitt 11")
+    );
     assert_eq!(programs[0].id, "abc123");
 
     // End time of first = start time of second
@@ -113,7 +128,10 @@ fn test_overnight_rollover() {
     assert!(programs[2].start_time > programs[1].start_time);
     // Specifically 02:00 on 2026-04-07 vs 23:30 on 2026-04-06
     let gap = programs[2].start_time - programs[1].start_time;
-    assert!(gap > 0, "overnight program must be after previous: gap={gap}");
+    assert!(
+        gap > 0,
+        "overnight program must be after previous: gap={gap}"
+    );
     // ~2.5 hours gap (23:30 to 02:00)
     assert!((gap - 9000).abs() < 60, "expected ~2.5h gap, got {gap}s");
 }

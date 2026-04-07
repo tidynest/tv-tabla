@@ -22,16 +22,32 @@ pub fn parse_xmltv_timestamp(ts: &str) -> Result<i64, AppError> {
     if tz_digits.len() != 4 {
         return Err(AppError::Custom(format!("invalid timezone: {tz_str}")));
     }
-    let tz_hours: i32 = tz_digits[..2].parse().map_err(|_| AppError::Custom(format!("invalid tz hours: {tz_str}")))?;
-    let tz_mins: i32  = tz_digits[2..].parse().map_err(|_| AppError::Custom(format!("invalid tz mins: {tz_str}")))?;
+    let tz_hours: i32 = tz_digits[..2]
+        .parse()
+        .map_err(|_| AppError::Custom(format!("invalid tz hours: {tz_str}")))?;
+    let tz_mins: i32 = tz_digits[2..]
+        .parse()
+        .map_err(|_| AppError::Custom(format!("invalid tz mins: {tz_str}")))?;
     let offset_secs = sign * (tz_hours * 3600 + tz_mins * 60);
 
-    let year:  i32 = dt_part[0..4].parse().map_err(|_| AppError::Custom(format!("bad year in {dt_part}")))?;
-    let month: u32 = dt_part[4..6].parse().map_err(|_| AppError::Custom(format!("bad month in {dt_part}")))?;
-    let day:   u32 = dt_part[6..8].parse().map_err(|_| AppError::Custom(format!("bad day in {dt_part}")))?;
-    let hour:  u32 = dt_part[8..10].parse().map_err(|_| AppError::Custom(format!("bad hour in {dt_part}")))?;
-    let min:   u32 = dt_part[10..12].parse().map_err(|_| AppError::Custom(format!("bad min in {dt_part}")))?;
-    let sec:   u32 = dt_part[12..14].parse().map_err(|_| AppError::Custom(format!("bad sec in {dt_part}")))?;
+    let year: i32 = dt_part[0..4]
+        .parse()
+        .map_err(|_| AppError::Custom(format!("bad year in {dt_part}")))?;
+    let month: u32 = dt_part[4..6]
+        .parse()
+        .map_err(|_| AppError::Custom(format!("bad month in {dt_part}")))?;
+    let day: u32 = dt_part[6..8]
+        .parse()
+        .map_err(|_| AppError::Custom(format!("bad day in {dt_part}")))?;
+    let hour: u32 = dt_part[8..10]
+        .parse()
+        .map_err(|_| AppError::Custom(format!("bad hour in {dt_part}")))?;
+    let min: u32 = dt_part[10..12]
+        .parse()
+        .map_err(|_| AppError::Custom(format!("bad min in {dt_part}")))?;
+    let sec: u32 = dt_part[12..14]
+        .parse()
+        .map_err(|_| AppError::Custom(format!("bad sec in {dt_part}")))?;
 
     let offset = FixedOffset::east_opt(offset_secs)
         .ok_or_else(|| AppError::Custom(format!("out-of-range offset: {offset_secs}")))?;
@@ -56,7 +72,11 @@ pub fn parse_channels(xml: &str) -> Result<Vec<Channel>, AppError> {
         match reader.read_event()? {
             Event::Start(e) if e.name().as_ref() == b"channel" => {
                 let id = attr_value(&e, b"id")?;
-                current = Some(PartialChannel { id, name: String::new(), icon_url: None });
+                current = Some(PartialChannel {
+                    id,
+                    name: String::new(),
+                    icon_url: None,
+                });
             }
             Event::Empty(e) if e.name().as_ref() == b"icon" => {
                 if let Some(ref mut ch) = current {
@@ -68,7 +88,10 @@ pub fn parse_channels(xml: &str) -> Result<Vec<Channel>, AppError> {
             }
             Event::Text(e) if in_display_name => {
                 if let Some(ref mut ch) = current {
-                    ch.name = e.xml_content().map_err(quick_xml::Error::from)?.into_owned();
+                    ch.name = e
+                        .xml_content()
+                        .map_err(quick_xml::Error::from)?
+                        .into_owned();
                 }
             }
             Event::End(e) if e.name().as_ref() == b"display-name" => {
@@ -106,11 +129,11 @@ pub fn parse_programs(xml: &str) -> Result<Vec<Program>, AppError> {
         match reader.read_event()? {
             Event::Start(e) if e.name().as_ref() == b"programme" => {
                 let channel_id = attr_value(&e, b"channel")?;
-                let start_ts   = attr_value(&e, b"start")?;
-                let stop_ts    = attr_value(&e, b"stop").ok();
+                let start_ts = attr_value(&e, b"start")?;
+                let stop_ts = attr_value(&e, b"stop").ok();
 
                 let start_time = parse_xmltv_timestamp(&start_ts)?;
-                let end_time   = match stop_ts {
+                let end_time = match stop_ts {
                     Some(ref s) => parse_xmltv_timestamp(s)?,
                     None => start_time + 3600,
                 };
@@ -128,41 +151,43 @@ pub fn parse_programs(xml: &str) -> Result<Vec<Program>, AppError> {
             }
             Event::Start(e) if current.is_some() => {
                 capture = match e.name().as_ref() {
-                    b"title"    => Some(ProgramField::Title),
-                    b"desc"     => Some(ProgramField::Desc),
+                    b"title" => Some(ProgramField::Title),
+                    b"desc" => Some(ProgramField::Desc),
                     b"category" => Some(ProgramField::Category),
                     _ => None,
                 };
             }
             Event::Text(e) => {
-                if let (Some(ref mut prog), Some(ref field)) = (current.as_mut(), capture.as_ref()) {
-                    let text = e.xml_content().map_err(quick_xml::Error::from)?.into_owned();
+                if let (Some(ref mut prog), Some(ref field)) = (current.as_mut(), capture.as_ref())
+                {
+                    let text = e
+                        .xml_content()
+                        .map_err(quick_xml::Error::from)?
+                        .into_owned();
                     match field {
-                        ProgramField::Title    => prog.title = text,
-                        ProgramField::Desc     => prog.description = Some(text),
+                        ProgramField::Title => prog.title = text,
+                        ProgramField::Desc => prog.description = Some(text),
                         ProgramField::Category => prog.category = Some(text),
                     }
                 }
             }
-            Event::End(e) => {
-                match e.name().as_ref() {
-                    b"title" | b"desc" | b"category" => capture = None,
-                    b"programme" => {
-                        if let Some(p) = current.take() {
-                            programs.push(Program {
-                                id: p.id,
-                                channel_id: p.channel_id,
-                                title: p.title,
-                                description: p.description,
-                                category: p.category,
-                                start_time: p.start_time,
-                                end_time: p.end_time,
-                            });
-                        }
+            Event::End(e) => match e.name().as_ref() {
+                b"title" | b"desc" | b"category" => capture = None,
+                b"programme" => {
+                    if let Some(p) = current.take() {
+                        programs.push(Program {
+                            id: p.id,
+                            channel_id: p.channel_id,
+                            title: p.title,
+                            description: p.description,
+                            category: p.category,
+                            start_time: p.start_time,
+                            end_time: p.end_time,
+                        });
                     }
-                    _ => {}
                 }
-            }
+                _ => {}
+            },
             Event::Eof => break,
             _ => {}
         }

@@ -1,4 +1,4 @@
-use rusqlite::{Connection, OptionalExtension, params};
+use rusqlite::{params, Connection, OptionalExtension};
 
 fn setup_test_db() -> Connection {
     let conn = Connection::open_in_memory().expect("in-memory DB");
@@ -29,7 +29,14 @@ fn insert_channel(conn: &Connection, id: &str, name: &str, visible: i32, sort_or
     .unwrap();
 }
 
-fn insert_program(conn: &Connection, id: &str, channel_id: &str, title: &str, start: i64, end: i64) {
+fn insert_program(
+    conn: &Connection,
+    id: &str,
+    channel_id: &str,
+    title: &str,
+    start: i64,
+    end: i64,
+) {
     conn.execute(
         "INSERT INTO programs (id, channel_id, title, description, category, start_time, end_time, fetched_at)
          VALUES (?1, ?2, ?3, NULL, NULL, ?4, ?5, 0)",
@@ -121,14 +128,14 @@ fn test_programs_time_range_query() {
     //   inside:   start=120, end=180  — entirely inside range [100, 200]
     //   overlap_end: start=180, end=250 — straddles range end
     //   after:    start=210, end=300  — starts after range end (200)
-    insert_program(&conn, "before",        "ch1", "Before",        0,   50);
-    insert_program(&conn, "overlap_start", "ch1", "OverlapStart", 50,  150);
-    insert_program(&conn, "inside",        "ch1", "Inside",       120, 180);
-    insert_program(&conn, "overlap_end",   "ch1", "OverlapEnd",   180, 250);
-    insert_program(&conn, "after",         "ch1", "After",        210, 300);
+    insert_program(&conn, "before", "ch1", "Before", 0, 50);
+    insert_program(&conn, "overlap_start", "ch1", "OverlapStart", 50, 150);
+    insert_program(&conn, "inside", "ch1", "Inside", 120, 180);
+    insert_program(&conn, "overlap_end", "ch1", "OverlapEnd", 180, 250);
+    insert_program(&conn, "after", "ch1", "After", 210, 300);
 
     let from = 100_i64;
-    let to   = 200_i64;
+    let to = 200_i64;
 
     let mut stmt = conn
         .prepare(
@@ -158,15 +165,26 @@ fn test_toggle_favourite() {
 
     // Not yet a favourite
     let count: i32 = conn
-        .query_row("SELECT COUNT(*) FROM favourites WHERE title = ?1", params![title], |row| row.get(0))
+        .query_row(
+            "SELECT COUNT(*) FROM favourites WHERE title = ?1",
+            params![title],
+            |row| row.get(0),
+        )
         .unwrap();
     assert_eq!(count, 0);
 
     // Add
-    conn.execute("INSERT INTO favourites (title, added_at) VALUES (?1, 1000)", params![title])
-        .unwrap();
+    conn.execute(
+        "INSERT INTO favourites (title, added_at) VALUES (?1, 1000)",
+        params![title],
+    )
+    .unwrap();
     let count: i32 = conn
-        .query_row("SELECT COUNT(*) FROM favourites WHERE title = ?1", params![title], |row| row.get(0))
+        .query_row(
+            "SELECT COUNT(*) FROM favourites WHERE title = ?1",
+            params![title],
+            |row| row.get(0),
+        )
         .unwrap();
     assert_eq!(count, 1);
 
@@ -174,7 +192,11 @@ fn test_toggle_favourite() {
     conn.execute("DELETE FROM favourites WHERE title = ?1", params![title])
         .unwrap();
     let count: i32 = conn
-        .query_row("SELECT COUNT(*) FROM favourites WHERE title = ?1", params![title], |row| row.get(0))
+        .query_row(
+            "SELECT COUNT(*) FROM favourites WHERE title = ?1",
+            params![title],
+            |row| row.get(0),
+        )
         .unwrap();
     assert_eq!(count, 0);
 }
@@ -186,24 +208,42 @@ fn test_settings_crud() {
 
     // Get non-existent key — should be None
     let val: Option<String> = conn
-        .query_row("SELECT value FROM settings WHERE key = ?1", params![key], |row| row.get(0))
+        .query_row(
+            "SELECT value FROM settings WHERE key = ?1",
+            params![key],
+            |row| row.get(0),
+        )
         .optional()
         .unwrap();
     assert!(val.is_none());
 
     // Set
-    conn.execute("INSERT OR REPLACE INTO settings (key, value) VALUES (?1, ?2)", params![key, "https://example.com/epg.xml"])
-        .unwrap();
+    conn.execute(
+        "INSERT OR REPLACE INTO settings (key, value) VALUES (?1, ?2)",
+        params![key, "https://example.com/epg.xml"],
+    )
+    .unwrap();
     let val: String = conn
-        .query_row("SELECT value FROM settings WHERE key = ?1", params![key], |row| row.get(0))
+        .query_row(
+            "SELECT value FROM settings WHERE key = ?1",
+            params![key],
+            |row| row.get(0),
+        )
         .unwrap();
     assert_eq!(val, "https://example.com/epg.xml");
 
     // Update
-    conn.execute("INSERT OR REPLACE INTO settings (key, value) VALUES (?1, ?2)", params![key, "https://updated.com/epg.xml"])
-        .unwrap();
+    conn.execute(
+        "INSERT OR REPLACE INTO settings (key, value) VALUES (?1, ?2)",
+        params![key, "https://updated.com/epg.xml"],
+    )
+    .unwrap();
     let val: String = conn
-        .query_row("SELECT value FROM settings WHERE key = ?1", params![key], |row| row.get(0))
+        .query_row(
+            "SELECT value FROM settings WHERE key = ?1",
+            params![key],
+            |row| row.get(0),
+        )
         .unwrap();
     assert_eq!(val, "https://updated.com/epg.xml");
 }
@@ -222,9 +262,14 @@ fn test_upsert_channels_preserves_visibility() {
         .unwrap();
 
     let visible_before: i32 = conn
-        .query_row("SELECT visible FROM channels WHERE id = 'ch1'", [], |row| row.get(0))
+        .query_row("SELECT visible FROM channels WHERE id = 'ch1'", [], |row| {
+            row.get(0)
+        })
         .unwrap();
-    assert_eq!(visible_before, 0, "channel should be hidden before re-upsert");
+    assert_eq!(
+        visible_before, 0,
+        "channel should be hidden before re-upsert"
+    );
 
     // Re-upsert — same SQL as db.rs::upsert_channels: only update name and icon_url, NOT visible
     conn.execute(

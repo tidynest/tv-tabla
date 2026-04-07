@@ -73,7 +73,11 @@ pub fn get_all_channels(conn: &Connection) -> Result<Vec<Channel>, AppError> {
     Ok(channels)
 }
 
-pub fn get_programs_in_range(conn: &Connection, from: i64, to: i64) -> Result<Vec<Program>, AppError> {
+pub fn get_programs_in_range(
+    conn: &Connection,
+    from: i64,
+    to: i64,
+) -> Result<Vec<Program>, AppError> {
     let mut stmt = conn.prepare(
         "SELECT p.id, p.channel_id, p.title, p.description, p.category, p.start_time, p.end_time
          FROM programs p
@@ -97,7 +101,11 @@ pub fn get_programs_in_range(conn: &Connection, from: i64, to: i64) -> Result<Ve
     Ok(programs)
 }
 
-pub fn get_favourite_programs(conn: &Connection, from: i64, to: i64) -> Result<Vec<Program>, AppError> {
+pub fn get_favourite_programs(
+    conn: &Connection,
+    from: i64,
+    to: i64,
+) -> Result<Vec<Program>, AppError> {
     let mut stmt = conn.prepare(
         "SELECT p.id, p.channel_id, p.title, p.description, p.category, p.start_time, p.end_time
          FROM programs p
@@ -124,7 +132,12 @@ pub fn get_favourite_programs(conn: &Connection, from: i64, to: i64) -> Result<V
 pub fn get_favourites(conn: &Connection) -> Result<Vec<Favourite>, AppError> {
     let mut stmt = conn.prepare("SELECT title, added_at FROM favourites ORDER BY added_at DESC")?;
     let favs = stmt
-        .query_map([], |row| Ok(Favourite { title: row.get(0)?, added_at: row.get(1)? }))?
+        .query_map([], |row| {
+            Ok(Favourite {
+                title: row.get(0)?,
+                added_at: row.get(1)?,
+            })
+        })?
         .collect::<Result<Vec<_>, _>>()?;
     Ok(favs)
 }
@@ -148,7 +161,11 @@ pub fn toggle_favourite(conn: &Connection, title: &str) -> Result<bool, AppError
     }
 }
 
-pub fn set_channel_visibility(conn: &Connection, channel_id: &str, visible: bool) -> Result<(), AppError> {
+pub fn set_channel_visibility(
+    conn: &Connection,
+    channel_id: &str,
+    visible: bool,
+) -> Result<(), AppError> {
     conn.execute(
         "UPDATE channels SET visible = ?1 WHERE id = ?2",
         rusqlite::params![visible as i32, channel_id],
@@ -157,7 +174,9 @@ pub fn set_channel_visibility(conn: &Connection, channel_id: &str, visible: bool
 }
 
 pub fn get_setting(conn: &Connection, key: &str) -> Result<Option<String>, AppError> {
-    match conn.query_row("SELECT value FROM settings WHERE key = ?1", [key], |row| row.get(0)) {
+    match conn.query_row("SELECT value FROM settings WHERE key = ?1", [key], |row| {
+        row.get(0)
+    }) {
         Ok(value) => Ok(Some(value)),
         Err(rusqlite::Error::QueryReturnedNoRows) => Ok(None),
         Err(e) => Err(e.into()),
@@ -180,7 +199,11 @@ pub fn upsert_channels(conn: &Connection, channels: &[Channel]) -> Result<(), Ap
     )?;
     for ch in channels {
         stmt.execute(rusqlite::params![
-            ch.id, ch.name, ch.icon_url, ch.visible as i32, ch.sort_order
+            ch.id,
+            ch.name,
+            ch.icon_url,
+            ch.visible as i32,
+            ch.sort_order
         ])?;
     }
     Ok(())
@@ -194,7 +217,14 @@ pub fn upsert_programs(conn: &Connection, programs: &[Program]) -> Result<(), Ap
     )?;
     for p in programs {
         stmt.execute(rusqlite::params![
-            p.id, p.channel_id, p.title, p.description, p.category, p.start_time, p.end_time, now
+            p.id,
+            p.channel_id,
+            p.title,
+            p.description,
+            p.category,
+            p.start_time,
+            p.end_time,
+            now
         ])?;
     }
     Ok(())

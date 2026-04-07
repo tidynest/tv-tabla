@@ -96,7 +96,11 @@ pub async fn refresh_data(state: tauri::State<'_, AppState>) -> Result<(), AppEr
 
     let today = chrono::Local::now().date_naive();
     let dates: Vec<String> = (0..7)
-        .map(|d| (today + chrono::Duration::days(d)).format("%Y-%m-%d").to_string())
+        .map(|d| {
+            (today + chrono::Duration::days(d))
+                .format("%Y-%m-%d")
+                .to_string()
+        })
         .collect();
 
     for date in &dates {

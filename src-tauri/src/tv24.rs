@@ -181,7 +181,12 @@ fn extract_slug(url: &str) -> String {
         .next()
         .unwrap_or_default()
         .strip_suffix("-l.webp")
-        .or_else(|| url.rsplit('/').next().unwrap_or_default().strip_suffix(".webp"))
+        .or_else(|| {
+            url.rsplit('/')
+                .next()
+                .unwrap_or_default()
+                .strip_suffix(".webp")
+        })
         .unwrap_or_default()
         .to_string()
 }

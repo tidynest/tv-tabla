@@ -39,7 +39,10 @@ fn test_parse_channels() {
     let svt1 = &channels[0];
     assert_eq!(svt1.id, "svt1.svt.se");
     assert_eq!(svt1.name, "SVT 1");
-    assert_eq!(svt1.icon_url.as_deref(), Some("https://xmltv.xmltv.se/logos/svt1.svt.se.png"));
+    assert_eq!(
+        svt1.icon_url.as_deref(),
+        Some("https://xmltv.xmltv.se/logos/svt1.svt.se.png")
+    );
 
     let tv4 = &channels[1];
     assert_eq!(tv4.id, "tv4.se");
@@ -55,7 +58,10 @@ fn test_parse_programs() {
     let aktuellt = &programs[0];
     assert_eq!(aktuellt.title, "Aktuellt");
     assert_eq!(aktuellt.channel_id, "svt1.svt.se");
-    assert_eq!(aktuellt.description.as_deref(), Some("Nyheter och reportage."));
+    assert_eq!(
+        aktuellt.description.as_deref(),
+        Some("Nyheter och reportage.")
+    );
     assert_eq!(aktuellt.category.as_deref(), Some("Nyheter"));
     // 2026-04-06T19:00:00+0200 = 2026-04-06T17:00:00Z
     assert_eq!(aktuellt.start_time, 1775494800);
@@ -64,7 +70,10 @@ fn test_parse_programs() {
 
     let rapport = &programs[1];
     assert_eq!(rapport.title, "Rapport");
-    assert_eq!(rapport.description.as_deref(), Some("Nyheter fran Sverige och varlden."));
+    assert_eq!(
+        rapport.description.as_deref(),
+        Some("Nyheter fran Sverige och varlden.")
+    );
     assert_eq!(rapport.category.as_deref(), Some("Nyheter"));
 }
 
@@ -73,7 +82,11 @@ fn test_parse_program_missing_stop_time() {
     let programs = parse_programs(SAMPLE_PROGRAMS_XML).expect("parse failed");
     let no_stop = &programs[2];
     assert_eq!(no_stop.title, "No Stop Time Show");
-    assert_eq!(no_stop.end_time, no_stop.start_time + 3600, "missing stop should default to +1h");
+    assert_eq!(
+        no_stop.end_time,
+        no_stop.start_time + 3600,
+        "missing stop should default to +1h"
+    );
 }
 
 #[test]
@@ -86,8 +99,14 @@ fn test_parse_timestamp() {
 #[test]
 fn test_parse_empty_xml() {
     let channels = parse_channels("<tv></tv>").expect("channels parse failed");
-    assert!(channels.is_empty(), "empty tv element should yield no channels");
+    assert!(
+        channels.is_empty(),
+        "empty tv element should yield no channels"
+    );
 
     let programs = parse_programs("<tv></tv>").expect("programs parse failed");
-    assert!(programs.is_empty(), "empty tv element should yield no programs");
+    assert!(
+        programs.is_empty(),
+        "empty tv element should yield no programs"
+    );
 }
