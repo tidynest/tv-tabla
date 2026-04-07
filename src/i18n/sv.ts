@@ -1,0 +1,28 @@
+export const sv = {
+  tab_now: "Nu",
+  tab_favourites: "Favoriter",
+  tab_week: "Vecka",
+  settings: "Installningar",
+  language: "Sprak",
+  channels: "Kanaler",
+  save: "Spara",
+  show_more: "Visa mer",
+  show_less: "Visa mindre",
+  no_data: "Data saknas",
+  loading: "Laddar...",
+  refresh: "Uppdatera",
+  stale_data: "Visar sparad data fran",
+  no_connection: "Kunde inte hamta TV-tablan. Kontrollera internetanslutningen.",
+  retry: "Forsok igen",
+  no_favourites: "Inga favoriter annu. Klicka pa stjarnan bredvid ett program for att lagga till det.",
+  add_favourite: "Lagg till",
+  remove_favourite: "Ta bort favorit?",
+  confirm: "Ja",
+  cancel: "Avbryt",
+  week: "Vecka",
+  all_channels: "Alla kanaler",
+  visible: "Synlig",
+  hidden: "Dold",
+} as const;
+
+export type TranslationKey = keyof typeof sv;

@@ -1,0 +1,28 @@
+import type { TranslationKey } from "./sv";
+
+export const en: Record<TranslationKey, string> = {
+  tab_now: "Now",
+  tab_favourites: "Favourites",
+  tab_week: "Week",
+  settings: "Settings",
+  language: "Language",
+  channels: "Channels",
+  save: "Save",
+  show_more: "Show more",
+  show_less: "Show less",
+  no_data: "No data",
+  loading: "Loading...",
+  refresh: "Refresh",
+  stale_data: "Showing saved data from",
+  no_connection: "Could not fetch TV listings. Check your internet connection.",
+  retry: "Try again",
+  no_favourites: "No favourites yet. Click the star next to a programme to add it.",
+  add_favourite: "Add to favourites",
+  remove_favourite: "Remove favourite?",
+  confirm: "Yes",
+  cancel: "Cancel",
+  week: "Week",
+  all_channels: "All channels",
+  visible: "Visible",
+  hidden: "Hidden",
+};

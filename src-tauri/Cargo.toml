@@ -1,0 +1,37 @@
+[package]
+name = "tv-tabla"
+version = "0.1.0"
+description = "Desktop TV guide for Swedish television"
+authors = ["Eric Jingryd <tidynest@proton.me>"]
+license = "MIT"
+repository = "https://github.com/tidynest/tv-tabla"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[lib]
+# The `_lib` suffix may seem redundant but it is necessary
+# to make the lib name unique and wouldn't conflict with the bin name.
+# This seems to be only an issue on Windows, see https://github.com/rust-lang/cargo/issues/8519
+name = "tv_tabla_lib"
+crate-type = ["staticlib", "cdylib", "rlib"]
+
+[build-dependencies]
+tauri-build = { version = "2", features = [] }
+
+[dependencies]
+tauri = { version = "2", features = [] }
+tauri-plugin-opener = "2"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+rusqlite = { version = "0.39.0", features = ["bundled"] }
+quick-xml = "0.39.2"
+reqwest = { version = "0.13.2", default-features = false, features = ["rustls"] }
+flate2 = "1.1.9"
+encoding_rs = "0.8.35"
+chrono = { version = "0.4.44", features = ["serde"] }
+log = "0.4.29"
+env_logger = "0.11.10"
+thiserror = "2.0.18"
+scraper = "0.22"
+
