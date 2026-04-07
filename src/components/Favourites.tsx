@@ -33,9 +33,10 @@ export function Favourites() {
       <Show
         when={(favourites() ?? []).length > 0}
         fallback={
-          <p style="text-align:center;color:var(--text-secondary);padding:40px">
-            {t("no_favourites")}
-          </p>
+          <div class="favourites-empty">
+            <span class="empty-star">{"\u2605"}</span>
+            <p>{t("no_favourites")}</p>
+          </div>
         }
       >
         <For each={[...grouped().entries()]}>
@@ -46,7 +47,7 @@ export function Favourites() {
                 <button
                   class="star-btn active"
                   onClick={() => setConfirmTitle(title)}
-                  style="font-size:13px;padding:4px 10px"
+                  style="font-size:16px;padding:6px 12px"
                 >
                   {"\u2715"}
                 </button>

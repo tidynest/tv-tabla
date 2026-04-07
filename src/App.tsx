@@ -7,8 +7,9 @@ import { WeekView } from "./components/WeekView";
 import { Settings } from "./components/Settings";
 import { StaleBanner } from "./components/StaleBanner";
 import { ErrorState } from "./components/ErrorState";
-import { activeTab, settingsOpen, refreshData, channels } from "./lib/state";
-import { setLocale } from "./i18n";
+import { activeTab, settingsOpen, refreshData, channels, hoveredProgram } from "./lib/state";
+import { setLocale, locale } from "./i18n";
+import { formatTime } from "./lib/time";
 import { api } from "./lib/api";
 import type { Locale } from "./lib/types";
 
@@ -41,6 +42,24 @@ export default function App() {
       </div>
       <Show when={settingsOpen()}>
         <Settings />
+      </Show>
+      <Show when={hoveredProgram()}>
+        {(data) => {
+          const pos = () => {
+            const d = data();
+            const x = Math.min(d.x + 12, window.innerWidth - 320);
+            const y = d.y < window.innerHeight - 100 ? d.y + 16 : d.y - 60;
+            return `left:${x}px;top:${y}px`;
+          };
+          return (
+            <div class="program-tooltip" style={pos()}>
+              <div class="tooltip-title">{data().program.title}</div>
+              <div class="tooltip-time">
+                {formatTime(data().program.start_time, locale())} – {formatTime(data().program.end_time, locale())}
+              </div>
+            </div>
+          );
+        }}
       </Show>
     </div>
   );

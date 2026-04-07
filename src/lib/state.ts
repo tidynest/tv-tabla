@@ -10,6 +10,11 @@ export const [selectedWeek, setSelectedWeek] = createSignal(0);
 export const [dayExpanded, setDayExpanded] = createSignal(false);
 export const [popupProgram, setPopupProgram] = createSignal<Program | null>(null);
 export const [settingsOpen, setSettingsOpen] = createSignal(false);
+export const [hoveredProgram, setHoveredProgram] = createSignal<{
+  program: Program;
+  x: number;
+  y: number;
+} | null>(null);
 
 // --- Tick: update currentTime every 60s ---
 setInterval(() => setCurrentTime(nowTimestamp()), 60_000);

@@ -8,13 +8,21 @@ import {
   setDayExpanded,
   setPopupProgram,
   popupProgram,
+  setHoveredProgram,
 } from "../lib/state";
 import { formatTime } from "../lib/time";
 import { ProgramPopup } from "./ProgramPopup";
 import type { Program, Channel } from "../lib/types";
 
-const PIXELS_PER_MINUTE = 8;
+const PIXELS_PER_MINUTE = 12;
 const VISIBLE_HOURS = 3;
+
+/** Insert soft hyphens (\u00AD) every 4 chars in long words. */
+function softHyphenate(text: string): string {
+  return text.replace(/\S{7,}/g, (w) =>
+    w.replace(/.{4}/g, "$&\u00AD").replace(/\u00AD$/, "")
+  );
+}
 
 export function TimelineGrid() {
   const timeRange = createMemo(() => {
@@ -68,30 +76,42 @@ export function TimelineGrid() {
     setPopupProgram(program);
   }
 
+  let headerScrollRef: HTMLDivElement | undefined;
+
+  function syncHeaderScroll(e: Event) {
+    if (headerScrollRef) {
+      headerScrollRef.scrollLeft = (e.currentTarget as HTMLDivElement).scrollLeft;
+    }
+  }
+
   return (
     <div>
+      {/* Sticky time header — outside overflow containers so sticky works */}
+      <div class="timeline-time-bar">
+        <div class="timeline-time-bar-spacer" />
+        <div class="timeline-time-bar-scroll" ref={headerScrollRef}>
+          <div class="time-header" style={`width:${totalWidth()}px`}>
+            <For each={timeSlots()}>
+              {(ts: number) => (
+                <span style={`width:${60 * PIXELS_PER_MINUTE}px`}>
+                  {formatTime(ts, locale())}
+                </span>
+              )}
+            </For>
+          </div>
+        </div>
+      </div>
+
+      {/* Main grid — channel labels + program rows */}
       <div class="timeline-grid">
         <div class="channel-labels">
-          <div class="channel-label" style="height:36px;font-size:12px;color:var(--text-secondary)">
-            &nbsp;
-          </div>
           <For each={channels() ?? []}>
             {(ch: Channel) => <div class="channel-label">{ch.name}</div>}
           </For>
         </div>
 
-        <div class="timeline-scroll">
+        <div class="timeline-scroll" onScroll={syncHeaderScroll}>
           <div style={`width:${totalWidth()}px;position:relative`}>
-            <div class="time-header">
-              <For each={timeSlots()}>
-                {(ts: number) => (
-                  <span style={`width:${60 * PIXELS_PER_MINUTE}px`}>
-                    {formatTime(ts, locale())}
-                  </span>
-                )}
-              </For>
-            </div>
-
             <For each={channels() ?? []}>
               {(ch: Channel) => (
                 <div class="timeline-row">
@@ -101,9 +121,10 @@ export function TimelineGrid() {
                         class="program-block"
                         style={blockStyle(p)}
                         onClick={(e) => handleBlockClick(p, e)}
-                        title={p.title}
+                        onMouseEnter={(e) => setHoveredProgram({ program: p, x: e.clientX, y: e.clientY })}
+                        onMouseLeave={() => setHoveredProgram(null)}
                       >
-                        {p.title}
+                        {softHyphenate(p.title)}
                       </div>
                     )}
                   </For>

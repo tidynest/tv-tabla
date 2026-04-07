@@ -21,5 +21,5 @@ export function t(key: TranslationKey): string {
 export const localeNames: Record<Locale, string> = {
   "sv-SE": "Svenska",
   "en-GB": "English",
-  "pt-BR": "Portugues",
+  "pt-BR": "Português",
 };
