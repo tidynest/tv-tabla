@@ -1,7 +1,7 @@
 {
   "name": "tv-tabla",
   "version": "0.1.0",
-  "description": "",
+  "description": "Desktop TV guide for Swedish television",
   "type": "module",
   "scripts": {
     "start": "vite",

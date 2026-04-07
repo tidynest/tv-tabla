@@ -1,8 +1,10 @@
 [package]
 name = "tv-tabla"
 version = "0.1.0"
-description = "A Tauri App"
-authors = ["you"]
+description = "Desktop TV guide for Swedish television"
+authors = ["Eric Jingryd <tidynest@proton.me>"]
+license = "MIT"
+repository = "https://github.com/tidynest/tv-tabla"
 edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
