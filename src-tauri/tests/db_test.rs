@@ -1,4 +1,4 @@
-use rusqlite::{params, Connection, OptionalExtension};
+use rusqlite::{Connection, OptionalExtension, params};
 
 fn setup_test_db() -> Connection {
     let conn = Connection::open_in_memory().expect("in-memory DB");

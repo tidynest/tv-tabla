@@ -130,10 +130,10 @@ pub fn parse_programs(html: &str, channel_id: &str, date: &str) -> Result<Vec<Pr
 
     for (i, r) in raw.iter().enumerate() {
         let total_min = r.hour * 60 + r.minute;
-        if let Some(prev) = prev_minutes {
-            if total_min < prev {
-                day_offset = 1;
-            }
+        if let Some(prev) = prev_minutes
+            && total_min < prev
+        {
+            day_offset = 1;
         }
         prev_minutes = Some(total_min);
 

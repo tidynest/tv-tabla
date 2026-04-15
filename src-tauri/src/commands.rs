@@ -1,6 +1,6 @@
+use crate::AppState;
 use crate::error::AppError;
 use crate::models::{Channel, Favourite, Program};
-use crate::AppState;
 
 #[tauri::command]
 pub async fn get_channels(state: tauri::State<'_, AppState>) -> Result<Vec<Channel>, AppError> {
