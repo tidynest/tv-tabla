@@ -1,5 +1,5 @@
 use quick_xml::events::Event;
-use quick_xml::Reader;
+use quick_xml::{Reader, XmlVersion};
 
 use crate::error::AppError;
 use crate::models::{Channel, Program};
@@ -89,7 +89,7 @@ pub fn parse_channels(xml: &str) -> Result<Vec<Channel>, AppError> {
             Event::Text(e) if in_display_name => {
                 if let Some(ref mut ch) = current {
                     ch.name = e
-                        .xml_content()
+                        .xml_content(XmlVersion::default())
                         .map_err(quick_xml::Error::from)?
                         .into_owned();
                 }
@@ -161,7 +161,7 @@ pub fn parse_programs(xml: &str) -> Result<Vec<Program>, AppError> {
                 if let (Some(ref mut prog), Some(ref field)) = (current.as_mut(), capture.as_ref())
                 {
                     let text = e
-                        .xml_content()
+                        .xml_content(XmlVersion::default())
                         .map_err(quick_xml::Error::from)?
                         .into_owned();
                     match field {
